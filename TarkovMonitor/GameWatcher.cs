@@ -841,8 +841,9 @@ namespace TarkovMonitor
         private string GetLatestLogFolder()
         {
             var logFolders = System.IO.Directory.GetDirectories(LogsPath);
-            var latestDate = new DateTime(0);
-            var latestLogFolder = logFolders.Last();
+            if (logFolders.Length == 0) return "";
+			var latestDate = new DateTime(0);
+			var latestLogFolder = logFolders.LastOrDefault() ?? "";
             foreach (var logFolder in logFolders)
             {
                 var dateTimeMatch = Regex.Match(logFolder, @"log_(?<timestamp>\d+\.\d+\.\d+_\d+-\d+-\d+)").Groups["timestamp"];
@@ -864,6 +865,7 @@ namespace TarkovMonitor
 
         private void WatchLogsFolder(string folderPath)
         {
+			if (string.IsNullOrEmpty(folderPath) || !Directory.Exists(folderPath)) return;
             var files = System.IO.Directory.GetFiles(folderPath);
             var monitorsStarted = 0;
             var monitorsCompletedInitialRead = 0;
